@@ -1,0 +1,385 @@
+:root {
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+
+    --em-100: #ecfdf5;
+    --em-600: #059669;
+    --em-700: #047857;
+
+    --green-600: #16a34a;
+    --indigo-600: #4f46e5;
+    --indigo-700: #4338ca;
+
+    --blue-50: #eff6ff;
+    --blue-600: #2563eb;
+
+    --red-50: #fef2f2;
+    --red-600: #dc2626;
+
+    --rose-100: #ffe4e6;
+    --rose-600: #e11d48;
+    --rose-700: #be123c;
+
+    --fundo-azul-escuro: #0F172A;
+    --fundo-card: #121b3a;
+    --cor-amarelo: #facc15;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: var(--fundo-azul-escuro);
+    color: var(--slate-50);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#tela-inicial {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.card-inicial {
+    background-color: var(--fundo-card);
+    border-radius: 16px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#logo-pokemon {
+    width: 110px;
+    height: auto;
+    margin-bottom: 20px;
+
+}
+
+.card-inicial h2 {
+    color: var(--cor-amarelo);
+    font-size: 2rem;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.card-inicial p {
+    color: var(--slate-400);
+    font-size: 1.1rem;
+    margin-bottom: 35px;
+}
+
+.form-grupo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.form-grupo label {
+    color: var(--slate-400);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+#input-nome {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--slate-800);
+    border: 1px solid var(--slate-700);
+    border-radius: 8px;
+    color: var(--slate-50);
+    font-size: 1rem;
+    outline: none;
+}
+
+#iniciar-jogo {
+    width: 100%;
+    background-color: var(--em-600);
+    color: var(--slate-50);
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+#area-jogo {
+    background-color: var(--fundo-card);
+    border: 2px solid var(--slate-700);
+    border-radius: 16px;
+    padding: 25px;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#hud {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--slate-700);
+    border-radius: 10px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+#hud-nome {
+    color: #3f755e;
+}
+
+#hud-timer {
+    color: var(--cor-amarelo);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    letter-spacing: 2px;
+}
+
+#hud-pares {
+    color: var(--blue-600);
+    letter-spacing: 2px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#grid-cartas {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+.card {
+    aspect-ratio: 4 / 3;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    border-radius: 8px;
+}
+
+
+.card.card-virada .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-frente,
+.card-verso {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--slate-700);
+    backface-visibility: hidden;
+}
+
+.card-verso {
+    background-color: var(--slate-800);
+    font-size: 24px;
+}
+
+.card-frente {
+    background-color: var(--slate-800);
+    transform: rotateY(180deg);
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px;
+}
+
+.card-frente img {
+    max-width: 65%;
+    max-height: 65%;
+    object-fit: contain;
+}
+
+.card-frente p {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--slate-100);
+}
+
+
+.badge-tipo {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    background-color: var(--slate-600);
+    color: var(--slate-50);
+}
+
+
+.card.card-acertada {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.card.card-acertada .card-inner .card-frente,
+.card.card-acertada .card-inner .card-verso {
+    background-color: var(--em-700);
+    border-color: var(--em-600);
+}
+
+#tela-final {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.card-final {
+    background-color: var(--fundo-card);
+    border-radius: 16px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.trofeu {
+    margin-bottom: 15px;
+    font-size: 40px;
+}
+
+#final-pontos {
+    color: #87EDB0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+}
+
+.pts {
+    color: #87EDB0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 22px;
+}
+
+.card-final h2 {
+    color: var(--cor-amarelo);
+    font-size: 28px;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-style: italic;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.resultado-tempo {
+    color: var(--slate-400);
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+#final-tempo {
+    color: var(--slate-50);
+    font-weight: bold;
+}
+
+.ranking-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#tabela-ranking {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 30px auto;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    gap: 8px;
+}
+
+.elemento-final {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 5px;
+}
+
+.elemento-final p {
+    margin-bottom: 0;
+    font-size: 15px;
+    color: var(--slate-400);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.elemento-final.jogador-atual p {
+    color: var(--cor-amarelo) !important;
+    font-weight: bold;
+}
+
+.text-right {
+    text-align: right;
+}
+
+#reiniciar-jogo {
+    width: 100%;
+    background-color: var(--em-600);
+    color: var(--slate-50);
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+#reiniciar-jogo:hover {
+    background-color: var(--em-700);
+}

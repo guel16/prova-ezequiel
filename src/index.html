@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memória Pokémon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="tela-inicial">
+        <div class="card-inicial">
+            <img src="img/pokeball-png-45334.png" id="logo-pokemon" alt="Logo Pokémon">
+            <h2>POKÉMON</h2>
+            <p>Memory Game</p>
+
+            <div class="form-grupo">
+                <label for="input-nome">Seu nome:</label>
+                <input type="text" id="input-nome" placeholder="Digite seu nome">
+            </div>
+
+            <button id="iniciar-jogo">▶ Iniciar Jogo</button>
+        </div>
+    </div>
+
+    <div id="area-jogo" class="hidden">
+        <div id="hud">
+            <p>👤 Nome: <span id="hud-nome"></span></p>
+            <p>⏳ <span id="hud-timer">00:00</span></p>
+            <p>🎯 <span id="hud-pares">0 / 10 pares</span></p>
+        </div>
+        <div id="grid-cartas"></div>
+    </div>
+
+    <div id="tela-final" class="hidden">
+        <div class="card-final">
+            <div class="trofeu">🏆</div>
+            <h2>Você venceu!</h2>
+
+            <div class="resultado-pontos">
+                <span id="final-pontos">0</span>
+                <span class="pts">pts</span>
+            </div>
+            <p class="resultado-tempo">Tempo: <span id="final-tempo">00:00</span></p>
+
+            <div class="ranking-container">
+                <button id="reiniciar-jogo">🎮 Jogar Novamente</button>
+            </div>
+        </div>
+    </div>
+        
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
