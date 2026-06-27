@@ -1,3 +1,4 @@
+
 let carta1 = null;
 let carta2 = null;
 let bloqueado = false;
@@ -7,6 +8,7 @@ let timer = null;
 let tempoDecorrido = 0;
 let nomeJogador = '';
 
+import { consultarDiretoComFetch, insertUsuario } from "./script_db.js";
 
 const btnIniciar = document.getElementById('iniciar-jogo');
 const btnReiniciar = document.getElementById('reiniciar-jogo');
@@ -23,7 +25,9 @@ const hudPares = document.getElementById('hud-pares');
 const finalPontos = document.getElementById('final-pontos');
 const finalTempo = document.getElementById('final-tempo');
 const gridCartas = document.getElementById('grid-cartas');
-
+// final
+const rankingJogadores = document.getElementsByClassName('ranking-container');
+const tBody = document.getElementById('tabela-jogadores');
 
 btnIniciar.addEventListener('click', iniciarJogo);
 btnReiniciar.addEventListener('click', reiniciarJogo);
@@ -59,7 +63,7 @@ function iniciarJogo() {
 
 async function buscarPokemonsAleatorios(quantidade) {
     gridCartas.innerHTML = "<p style='grid-column: span 5; text-align: center;'>Buscando Pokémons na PokéAPI...</p>";
-    
+
     const ids = new Set();
     while (ids.size < quantidade) {
         ids.add(Math.floor(Math.random() * 151) + 1);
@@ -70,13 +74,13 @@ async function buscarPokemonsAleatorios(quantidade) {
         for (const id of ids) {
             // CORRIGIDO: Agora passa estritamente apenas o ID correto na URL
             const resp = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-            
+
             if (!resp.ok) {
                 throw new Error(`Erro na requisição do ID ${id}`);
             }
 
             const dados = await resp.json();
-            
+
             pokemons.push({
                 id: dados.id,
                 nome: dados.name,
@@ -162,21 +166,34 @@ function gerenciarCliqueCarta() {
     }
 }
 
-function verificarVitoria() {
-    if (paresEncontrados === totalPares) {
-        clearInterval(timer);
+async function verificarVitoria() {
+    if (paresEncontrados !== totalPares) return;
 
-        const pontuacao = Math.max(0, Math.floor(5000 - (tempoDecorrido * 10)));
-        const tempoFormatado = formatarTempo(tempoDecorrido);
+    clearInterval(timer);
+
+    const pontuacao = Math.max(0, Math.floor(5000 - (tempoDecorrido * 10)));
+    const tempoFormatado = formatarTempo(tempoDecorrido);
+
+    finalPontos.textContent = pontuacao;
+    finalTempo.textContent = tempoFormatado;
 
 
-        finalPontos.textContent = `${pontuacao}`;
-        finalTempo.textContent = tempoFormatado;
+    const sucesso = await insertUsuario(
+        nomeJogador,
+        pontuacao,
+        tempoDecorrido
+    );
 
-
-        telaJogo.classList.add('hidden');
-        telaFinal.classList.remove('hidden');
+    if (sucesso) {
+        mostrarToast("Pontuação salva!");
+    } else {
+        mostrarToast("Erro ao salvar.", true);
     }
+
+    await carregarRanking();
+
+    telaJogo.classList.add("hidden");
+    telaFinal.classList.remove("hidden");
 }
 
 function reiniciarJogo() {
@@ -193,9 +210,71 @@ function reiniciarJogo() {
     telaInicial.classList.remove('hidden');
 }
 
+async function carregarRanking() {
+
+    tBody.innerHTML = "";
+
+    const ranking = await consultarDiretoComFetch();
+
+    ranking.forEach((jogador, indice) => {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${indice + 1}</td>
+            <td>${jogador.nome_jogador}</td>
+            <td>${jogador.pontuacao}</td>
+        `;
+
+        tBody.appendChild(tr);
+
+    });
+
+}
+
 
 function formatarTempo(s) {
     const min = Math.floor(s / 60).toString().padStart(2, '0');
     const sec = (s % 60).toString().padStart(2, '0');
     return `${min}:${sec}`;
 }
+function mostrarToast(mensagem, erro = false) {
+
+    const toast = document.getElementById("toast");
+
+    toast.innerText = mensagem;
+
+    toast.className = "";
+
+    if (erro) {
+
+        toast.classList.add("erro");
+
+    }
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 3000);
+
+}
+
+function encerrarJogo(nomeJogador, tempo_segundos, pontuacao) {
+
+    const medalhas = ['🥇', '🥈', '🥉'];
+    rankingJogadores.forEach((r, i) => {
+        const destaque = r.nomeJogador === nomeJogador ? 'class="linha-destaque"' : '';
+        tbody.innerHTML += `
+        <tr ${destaque}>
+        <td>${medalhas[i] ?? i + 1} </td>
+        <td>${r.nomeJogador}</td>
+        <td>${r.pontuacao.toLocaleString('pt-BR')} pts</td>
+        <td>${r.tempoDecorrido} pts</td>
+        </tr> `;
+    })
+    tBody.appendChild()
+}
+
