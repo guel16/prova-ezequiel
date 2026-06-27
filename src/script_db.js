@@ -1,16 +1,13 @@
-const DATABASE_URL = "postgresql://neondb_owner:npg_Lq1vulKFRE8j@ep-falling-glade-aczx46il-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
-const TOKEN = "napi_s6z06e2xqz45f85wamao4064vextqid07vg8bzcp29aleu2jgvb3iwun3rjvemkp"
-
-const host = new URL(DATABASE_URL).host;
-const neonHttpEndpoint = `https://${host}/sql`;
+const neonHttpEndpoint = "https://ep-falling-glade-aczx46il-pooler.sa-east-1.aws.neon.tech/sql/v1/query";
+const NEON_TOKEN = "napi_c44mxvrkvm1188xjab8idptcklx80p4esuhtubg3xez9y5ut6ikm1sq0d7c54wo1"; 
 
 async function executarQueryNeon(querySQL, parametros = []) {
     try {
         const resposta = await fetch(neonHttpEndpoint, {
             method: 'POST',
             headers: {
-                'Neon-Connection-String': DATABASE_URL,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${NEON_TOKEN}`
             },  
             body: JSON.stringify({
                 query: querySQL,
@@ -24,7 +21,7 @@ async function executarQueryNeon(querySQL, parametros = []) {
         }
 
         const dados = await resposta.json();
-        return dados.rows;
+        return dados.rows || dados || [];
 
     } catch (erro) {
         console.error("Falha ao comunicar com o banco de dados:", erro);
@@ -32,40 +29,29 @@ async function executarQueryNeon(querySQL, parametros = []) {
     }
 }
 
-
 export async function consultarDiretoComFetch() {
-    console.log("Buscando todos os usuários no banco...");
     const query = 'SELECT * FROM ranking ORDER BY pontuacao DESC LIMIT 10';
-
     const linhas = await executarQueryNeon(query);
     return linhas || []; 
 }
 
-
-export async function insertUsuario(nome, email, status) {
-    console.log("Cadastrando usuário no banco:", { nome, email, status });
+export async function insertUsuario(nome_jogador, pontuacao, tempo_segundos) {
     const query = 'INSERT INTO ranking (nome_jogador , pontuacao , tempo_segundos) VALUES ($1, $2, $3) RETURNING *';
     const params = [nome_jogador , pontuacao , tempo_segundos];
-
     const linhas = await executarQueryNeon(query, params);
     return linhas !== null; 
 }
 
-// --- U (UPDATE / ATUALIZAR) ---
-export async function sqlAtualizarUsuario(id, nome, email, status) {
-    console.log("Atualizando usuário no banco. ID:", id);
-    const query = 'UPDATE usuarios SET nome = $1, email = $2, status = $3 WHERE id = $4 RETURNING *';
-    const params = [nome, email, status, id]; // A ordem importa! O ID é o $4
-
+export async function sqlAtualizarUsuario(id, nome_jogador, pontuacao, tempo_segundos) {
+    const query = 'UPDATE ranking SET nome_jogador = $1, pontuacao = $2, tempo_segundos = $3 WHERE id = $4 RETURNING *';
+    const params = [nome_jogador, pontuacao, tempo_segundos, id];
     const linhas = await executarQueryNeon(query, params);
     return linhas !== null; 
 }
 
 export async function sqlDeletarUsuario(id) {
-    console.log("Deletando usuário do banco. ID:", id);
-    const query = 'DELETE FROM usuarios WHERE id = $1 RETURNING *';
+    const query = 'DELETE FROM ranking WHERE id = $1 RETURNING *';
     const params = [id];
-
     const linhas = await executarQueryNeon(query, params);
     return linhas !== null; 
 }
